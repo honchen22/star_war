@@ -410,6 +410,12 @@
             }
         });
 
+        d3.json("timeline.json", function (error, data) {
+           var height2 = 240-40;
+           var width2=960;
+           console.log(data);
+        });
+
         var info;
         d3.json("all.json", function (error, data) {
             info = data;
