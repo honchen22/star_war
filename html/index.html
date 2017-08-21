@@ -137,6 +137,11 @@
         width: 200px;
         background-color: #666;
     }
+
+    #svg2 g.row:hover {
+        stroke-width: 1px;
+        stroke: #fff;
+    }
 </style>
 
 <body>
@@ -411,15 +416,57 @@
         });
 
         d3.json("timeline.json", function (error, data) {
-           var height2 = 240-40;
-           var width2=960;
-           console.log(data);
+            var height2 = 240 - 40;
+            var width2 = 960;
+            console.log(data);
+
+            d3.select("#svg2 g").selectAll("text.film").data(data['films']).enter().append('text').text(function (d) {
+                return d[0];
+            }).attr('transform', function (d, i) {
+                return 'translate(150,' + (40 + (i + 0.5) * height2 / data['films'].length) + ')';
+            }).attr('fill', '#fff').attr('font-size', 12).attr('text-anchor', 'end').attr('class', 'film');
+
+            d3.select("#svg2 g").selectAll("text.title").data(data['data']).enter().append('text').text(function (d) {
+                return d['name'];
+            }).attr('name', function (d) {
+                return d['name'];
+            }).attr('transform', function (d, i) {
+                return 'translate(' + (165 + (i) * (width2 - 165) / data['data'].length) + ', 25)';
+            }).attr('fill', '#fff').attr('font-size', 12).attr('text-anchor', 'middle').attr('class', 'title').attr('fill-opacity', 0);
+            var colors2 = ['#4e88af', '#ca635f', '#d2907c', '#d6744d', '#ded295'];
+
+            for (var i = 0; i < data['data'].length; i++) {
+                var tmp = data['data'][i];
+                d3.select("#svg2 g").append('g').attr('id', tmp['name']).attr('class', 'row').selectAll('rect').data(tmp['vector']).enter().append('rect').attr('width', Math.floor((width2 - 165) / data['data'].length)).attr('height', (height2 / data['films'].length - 1)).attr('fill', function (d, j) {
+                    return colors2[tmp.group];
+                }).attr('transform', function (d, j) {
+                    return 'translate(' + (165 + i * (width2 - 165) / data['data'].length) + ',' + (40 + j * height2 / data['films'].length) + ')';
+                }).attr('fill-opacity', function (d) {
+                    if (d == 1) {
+                        return 1;
+                    } else if (d == 0) {
+                        return 0;
+                    }
+                });
+            }
+
+        });
+
+        $('#svg2').on('mouseenter', 'g.row', function (event) {
+            $('#svg2 text.title').attr('fill-opacity', 0);
+            console.log($(this).attr('id'));
+            $('#svg2 text.title[name="' + $(this).attr('id') + '"]').attr('fill-opacity', 1);
+        });
+
+        $('#svg2').on('mouseleave', 'g.row', function (event) {
+            $('#svg2 text.title').attr('fill-opacity', 0);
+
         });
 
         var info;
         d3.json("all.json", function (error, data) {
             info = data;
-        })
+        });
 
     });
 </script>
