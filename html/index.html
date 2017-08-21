@@ -125,6 +125,18 @@
         color: #888;
         margin-right: 10px;
     }
+
+    #search input {
+        position: absolute;
+        top: 220px;
+        left: 60px;
+        color: #fff;
+        border: none;
+        outline: none;
+        box-shadow: none;
+        width: 200px;
+        background-color: #666;
+    }
 </style>
 
 <body>
@@ -140,7 +152,7 @@
         <span style="border-top-left-radius: 0;border-bottom-left-radius: 0; position: relative;left: -5px;">Texts</span>
     </div>
     <div id="search">
-
+        <input type="text" class="form-control">
     </div>
     <div id="info">
         <h4></h4>
@@ -367,6 +379,34 @@
             if (!dragging) {
                 d3.select('#svg1 .texts').selectAll('text').attr('class', '');
                 d3.select('#svg1 .links').selectAll('line').attr('class', '');
+            }
+        });
+
+        $('#search input').keyup(function (event) {
+            if ($(this).val() == '') {
+                d3.select('#svg1 .texts').selectAll('text').attr('class', '');
+                d3.select('#svg1 .nodes').selectAll('circle').attr('class', '');
+                d3.select('#svg1 .links').selectAll('line').attr('class', '');
+            }
+            else {
+                var name = $(this).val();
+                d3.select('#svg1 .nodes').selectAll('circle').attr('class', function (d) {
+                    if (d.id.toLowerCase().indexOf(name.toLowerCase()) >= 0) {
+                        return '';
+                    } else {
+                        return 'inactive';
+                    }
+                });
+                d3.select('#svg1 .texts').selectAll('text').attr('class', function (d) {
+                    if (d.id.toLowerCase().indexOf(name.toLowerCase()) >= 0) {
+                        return '';
+                    } else {
+                        return 'inactive';
+                    }
+                });
+                d3.select("#svg1 .links").selectAll('line').attr('class', function (d) {
+                    return 'inactive';
+                });
             }
         });
 
